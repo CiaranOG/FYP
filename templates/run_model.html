@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Run a model</title>
+  </head>
+  <body>
+    {% extends "template.html" %}
+    {% block content %}
+    <h1> Upload file and run model </h1>
+      <form method=post enctype=multipart/form-data>
+        <input type=file name=file>
+        <input type=submit value=Upload>
+      </form>
+
+    {% if dataframe is not none and predictions is not none %}
+      <p>ayo theyre both defined {{predictions}}</p>
+      <table border = 1>
+         {% for example in dataframe %}
+            <tr>
+                {% for feature in example %}
+                  <td> {{ feature }} </td>
+                {% endfor %}
+            </tr>
+         {% endfor %}
+      </table>
+    {% endif %}
+
+    {% endblock %}
+  </body>
+</html>

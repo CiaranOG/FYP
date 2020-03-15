@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Run a model</title>
+  </head>
+  <body>
+    {% extends "template.html" %}
+    {% block content %}
+    <h1> Run a model </h1>
+    <form action = "http://localhost:5000/predict" method = "post">
+         <p>Enter Name:</p>
+         <p><input type = "text" name = "nm" /></p>
+         <p><input type = "submit" value = "submit" /></p>
+    </form>
+
+    <div id="uploads"></div>
+    <div class="dropzone" id="dropzone">Files to upload</div>
+    <script>
+          (function() {
+            var dropzone = document.getElementById('dropzone');
+            var upload = function(files){
+              var formData = new FormData(),
+                xhr = new XMLHttpRequest(),
+                x;
+              for( x =0; x < files.length; x = x + 1){
+                formData.append('file[]',files[x]);
+              }
+              xhr.onload =function() {
+                var data =this.responseText;
+                console.log(data);
+              }
+              xhr.open('','upload.php');
+              xhr.send(formData);
+            }
+
+            dropzone.ondrop = function(e) {
+              e.preventDefault();
+              this.className = 'dropzone';
+              console.log(e.dataTransfer.files);
+            }
+            dropzone.ondragover = function() {
+              this.className = 'dropzone dragover';
+              return false;
+            }
+
+            dropzone.ondragleave = function(){
+              this.className = 'dropzone'
+              return false;
+            }
+
+          }());
+    </script>
+
+
+
+    {% endblock %}
+  </body>
+</html>

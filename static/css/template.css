@@ -1,0 +1,47 @@
+body{
+    display: grid;
+    grid-template-columns: 25% 75%;
+    grid-template-rows: auto;
+    grid-template-areas: "top top"
+                         "middle-left middle-right"
+                         "bottom bottom"
+
+}
+
+header {
+    grid-area: top;
+}
+
+nav {
+    grid-area: middle-left;
+}
+
+main {
+    grid-area: middle-right;
+}
+
+footer {
+    grid-area: bottom;
+}
+
+
+ul{
+  text-decoration: none;
+  list-style: none;
+}
+
+
+.dropzone{
+  width:300px;
+  height:300px;
+  border: 2px dashed gray;
+  color:gray;
+  text-align:center;
+  line-height:300px;
+}
+
+.dropzone.dragover {
+  border-color:black;
+  color:black;
+  background:green;
+}

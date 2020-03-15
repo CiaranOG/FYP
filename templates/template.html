@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Flask Tutorial</title>
+    <link rel="stylesheet" href="{{ url_for('static',     filename='css/template.css') }}">
+  </head>
+  <body>
+    <header>
+      <h1></h1>
+    </header>
+
+    <nav>
+      <ul>
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('run_model') }}">Run a model</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      {% block content %}
+      {% endblock %}
+    </main>
+
+    <footer></footer>
+  </body>
+</html>

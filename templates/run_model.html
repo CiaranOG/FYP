@@ -14,16 +14,11 @@
       </form>
 
     {% if dataframe is not none and predictions is not none %}
-      <p>ayo theyre both defined {{predictions}}</p>
-      <table border = 1>
-         {% for example in dataframe %}
-            <tr>
-                {% for feature in example %}
-                  <td> {{ feature }} </td>
-                {% endfor %}
-            </tr>
-         {% endfor %}
-      </table>
+      <p>Predictions Complete!</p>
+      <div class="container" align="left">
+		      <a href="/downloadables/Results.csv" target="blank"><button class="csv">Download!</button></a>
+      </div>
+
     {% endif %}
 
     {% endblock %}

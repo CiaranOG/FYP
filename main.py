@@ -5,7 +5,9 @@ import pickle
 import pandas as pd
 import numpy as np
 from datetime import datetime
-
+from flask import Flask, render_template
+from flask_socketio import SocketIO
+import json
 
 UPLOAD_FOLDER = 'uploads'
 DOWNLOAD_FOLDER = 'downloadables'
@@ -14,6 +16,8 @@ app = Flask(__name__)
 MODEL = pickle.load(open('models/label_spread.sav', 'rb'))
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['DOWNLOAD_FOLDER'] = DOWNLOAD_FOLDER
+app.config['SECRET_KEY'] = 'secret_key'
+socketio = SocketIO(app)
 
 @app.route("/")
 def home():
@@ -28,9 +32,7 @@ def predict():
         result = request.form['nm']
         return render_template("predict.html",result = result)
 
-@app.route("/stream_data")
-def stream_data():
-    return render_template("stream_data.html")
+
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -73,5 +75,25 @@ from flask import send_from_directory
 
 
 
+
+@app.route("/stream_data")
+def stream_data():
+    return render_template("stream_data.html")
+
+@socketio.on('end transfer')
+def end_transfer():
+    socketio.emit('end transfer', broadcast=True)
+
+@socketio.on('my event')
+def handle_my_custom_event(json, methods=['GET', 'POST']):
+    print('received my event: ' + str(json))
+    f = open("downloadables/report.csv", "a")
+    f.write(json['message'])
+    f.close()
+    # df = pd.DataFrame(json['message'])
+    # print(df)
+    socketio.emit('my response', json, broadcast=True)
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    socketio.run(app,debug=True)

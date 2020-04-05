@@ -15,9 +15,12 @@
 
     {% if dataframe is not none and predictions is not none %}
       <p>Predictions Complete!</p>
-      <div class="container" align="left">
-		      <a href="/downloadables/Results.csv" target="blank"><button class="csv">Download!</button></a>
-      </div>
+		      <a href="/downloadables/Results.csv" target="blank">
+            <figure>
+              <img src="static/images/csv.svg" alt="Csv results file">
+              <figcaption>Results.csv</figcaption>
+            </figure>
+          </a>
 
     {% endif %}
 

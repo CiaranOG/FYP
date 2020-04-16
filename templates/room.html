@@ -12,7 +12,7 @@
     <h1>Room Number: {{room_code}}</h1>
 
 
-    <h3 id = 'header' style='color: #ccc;font-size: 30px;'>No input yet</h3>
+      <h3 id = 'header' style='color: #ccc;font-size: 30px;'>No input yet</h3>
       <div class="message_holder"></div>
 
       <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -21,20 +21,21 @@
       <script type="text/javascript">
         var socket = io.connect('http://' + document.domain + ':' + location.port);
         socket.emit('Webpage_enter_room', {{room_code}});
-        socket.on('page_joined', function() {
-          $( 'main' ).append( '<h1>Sucess !</h1>')
-        });
         socket.on( 'my response', function( msg ) {
           console.log( msg )
           if( typeof msg.room !== 'undefined' ) {
             document.getElementById("header").innerHTML = "Recieving data";
             document.getElementById("header").style.color = "black";
-            $( 'div.message_holder' ).prepend( '<div><b style="color: #000">'+msg.user_name+'</b> '+msg.message+'</div>' )
+            $( 'div.message_holder' ).prepend( '<div><b style="color: #000">'+'</b> '+msg.message+'</div>' )
           }
         });
         socket.on('end transfer', function() {
           document.getElementById("header").innerHTML = "Transfer Complete";
-          $( 'main' ).append( '<a href="/downloadables/Results.csv" target="blank"><figure><img src="static/images/csv.svg" alt="Csv report file"><figcaption>report.csv</figcaption></figure></a>')
+          $( 'main' ).append( '<a href="/downloadables/Results.csv" target="blank"><figure><img src="../static/images/csv.svg" alt="Csv report file"><figcaption>report.csv</figcaption></figure></a>')
+        });
+        socket.on('Stream failed', function() {
+          document.getElementById("header").innerHTML = "Error:DataStreaming Failed";
+          document.getElementById("header").style.color = "Red";
         });
       </script>
 

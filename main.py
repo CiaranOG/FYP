@@ -15,7 +15,7 @@ UPLOAD_FOLDER = 'uploads'
 DOWNLOAD_FOLDER = 'downloadables'
 ALLOWED_EXTENSIONS = {'csv'}
 app = Flask(__name__)
-MODEL = pickle.load(open('models/label_spread.sav', 'rb'))
+MODEL = pickle.load(open('models/SVM.sav', 'rb'))
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['DOWNLOAD_FOLDER'] = DOWNLOAD_FOLDER
 app.config['SECRET_KEY'] = 'secret_key'
@@ -38,48 +38,52 @@ def uploaded_file(filename):
 
 @app.route('/run_model', methods=['GET', 'POST'])
 def run_model():
-
     if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit an empty part without filename
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            #return redirect(url_for('uploaded_file', filename='Results.csv'))
-            df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            df["GSR Sie"] = df["GSR Sie"].fillna(value=-1)
-            df= df.drop(columns=['event'])
-            df = df.dropna()
-            df= df.drop(columns=['Time', 'GSR kOhm', 'GSR Sie', 'BPM','lookdown time', 'breath rate', 'breath reg', 'height','label'])
-            predictions = MODEL.predict(df)
-            df['predictions'] = predictions
-            # saving the dataframe
-            df.to_csv('downloadables/Results.csv',index=False, encoding='utf-8')
-            return render_template("run_model.html",dataframe= df, predictions= predictions)
-    return render_template("run_model.html",dataframe= None, predictions= None)
+        try:
+            # check if the post request has the file part
+            if 'file' not in request.files:
+                raise ValueError('No file part')
+            file = request.files['file']
+            # if user does not select file, browser also
+            # submit an empty part without filename
+            if file.filename == '':
+                raise ValueError('No file selected')
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                #return redirect(url_for('uploaded_file', filename='Results.csv'))
+                df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                df = df.dropna()
+                df= df[['delta', 'alpha1', 'alpha2', 'beta1', 'beta2', 'theta', 'gamma1','gamma2']]
+                predictions = MODEL.predict(df)
+                df['predictions'] = predictions
+                # saving the dataframe
+                df.to_csv('downloadables/Results.csv',index=False, encoding='utf-8')
+                return render_template("run_model.html",dataframe= df, predictions= predictions, error= None)
+        except ValueError as e:
+            return render_template("run_model.html",dataframe= None, predictions= None, error= e)
+        except:
+            e = "Error converting to dataframe and running model make sure file is .csv and has columns 'delta', 'alpha1', 'alpha2', 'beta1', 'beta2', 'theta', 'gamma1','gamma2'"
+            return render_template("run_model.html",dataframe= None, predictions= None, error= e)
+    return render_template("run_model.html",dataframe= None, predictions= None, error= None)
 from flask import send_from_directory
 
 @app.route('/enter_room', methods=['GET', 'POST'])
 def enter_room():
     global ROOMS
     if request.method == 'POST':
-        if len(request.form.get('code')) == 0 :
-            return render_template("enter_room.html", error = "No code entered")
-        if int(request.form.get('code')) not in ROOMS:
-            return render_template("enter_room.html", error = 'No room exists with code "{}".'.format(request.form.get('code')))
-        if int(request.form.get('code')) in ROOMS:
-            roomURL = "room/" + str(request.form.get('code'))
-            print("roomURL:",roomURL)
-            return redirect(roomURL)
-
+        try:
+            if len(request.form.get('code')) == 0 :
+                raise ValueError('No code entered')
+            if int(request.form.get('code')) not in ROOMS:
+                raise ValueError('No room exists with code "{}".'.format(request.form.get('code')))
+            if int(request.form.get('code')) in ROOMS:
+                roomURL = "room/" + str(request.form.get('code'))
+                return redirect(roomURL)
+        except ValueError as e:
+            return render_template("enter_room.html", error = e)
+        except:
+            return render_template("enter_room.html", error = e)
     return render_template("enter_room.html")
 
 @app.route('/room/<room>')
@@ -125,23 +129,20 @@ def create_room():
 @socketio.on('my event')
 def handle_my_custom_event(json, methods=['GET', 'POST']):
     print('received my event: ' + str(json))
-    line = json['message']
-    line = line.replace(",,",", -1,")
-    line = line.replace(",0,",", -1,")
-    line = line.strip('\n')
-    print(line)
-    df = pd.DataFrame(eval(line))
-    print('here')
-    prediction =  MODEL.predict(df.transpose())
-    json['message'] = line + ", " + str(prediction[0])
-    print('prediction:',prediction)
-    f = open("downloadables/report.csv", "a")
-    f.write(line + ", " + str(prediction[0]) + "\n")
-    f.close()
-    # df = pd.DataFrame(eval(json['message'].replace(",,","0")))
-    # print("",df)
-    print("json['room']:",json['room'])
-    socketio.emit('my response', json, room = int(json['room']) )
+    try:
+        line = json['message']
+        line = line.replace(",,",", -1,")
+        line = line.replace(",0,",", -1,")
+        line = line.strip('\n')
+        df = pd.DataFrame(eval(line))
+        prediction =  MODEL.predict(df.transpose())
+        json['message'] = line + ", " + str(prediction[0])
+        f = open("downloadables/report.csv", "a")
+        f.write(line + ", " + str(prediction[0]) + "\n")
+        f.close()
+        socketio.emit('my response', json, room = int(json['room']) )
+    except:
+        socketio.emit('Stream failed', room = int(json['room']) )
 
 
 if __name__ == "__main__":

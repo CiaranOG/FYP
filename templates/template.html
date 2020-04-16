@@ -4,19 +4,23 @@
     <meta charset="utf-8">
     <title>Flask Tutorial</title>
     <link rel="stylesheet" href="{{ url_for('static',     filename='css/template.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
   <body>
     <header>
-      <h1></h1>
+      <nav>
+        <div id= "logo">
+          <img src="../static/images/transparent_logo.png" alt="Website logo">
+        </div>
+        <ul>
+              <li><a href="{{ url_for('home') }}">Home </a></li>
+              <li><a href="{{ url_for('run_model') }}">Run a model</a></li>
+              <li><a href="{{ url_for('enter_room') }}">Stream data</a></li>
+        </ul>
+      </nav>
     </header>
 
-    <nav>
-      <ul>
-            <li><a href="{{ url_for('home') }}">Home</a></li>
-            <li><a href="{{ url_for('run_model') }}">Run a model</a></li>
-            <li><a href="{{ url_for('stream_data') }}">Stream data</a></li>
-      </ul>
-    </nav>
+
 
     <main>
       {% block content %}

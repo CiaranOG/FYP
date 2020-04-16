@@ -2,11 +2,10 @@ body{
     margin:0;
     padding:0;
     display: grid;
-    grid-template-columns: 25% 75%;
     grid-template-rows: auto;
-    grid-template-areas: "top top"
-                         "middle-left middle-right"
-                         "bottom bottom"
+    grid-template-areas: "top "
+                         "middle"
+                         "bottom "
 
 }
 
@@ -17,15 +16,71 @@ header {
     padding:0;
 }
 
-nav {
-    grid-area: middle-left;
-    background: gray;
-    height:100%;
+nav{
+  width: 100%;
+  background-color: #333;
+}
+nav img{
+  width: 3.5em;
+
+}
+nav ul{
+  font-size: 1.5em;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+  text-align:left;
+  display:inline-block;
+  vertical-align:top;
+
+}
+nav ul li{
+  display: inline-block;
+  margin-right: -4px;
+
+}
+nav ul li a{
+  display: block;
+  color: white;
+  text-align: center;
+  padding: .75em 1.5em;
+  text-decoration: none;
+
+}
+nav ul li a:hover{
+  color:#1abc9c;
+  background: #111;
+
+}
+#logo{
+    display: inline-block;
+    vertical-align: top;
+}
+input {
+  width: 15%;
+  padding: 1em 2em;
+  margin: 1em 0;
+  box-sizing: border-box;
+  font-size: 15px;
+}
+
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    width: 15%;
+    padding: 1em 2em;
+    margin: 1em 0;
+    cursor: pointer;
 }
 
 main {
   text-align: center;
-    grid-area: middle-right;
+  grid-area: middle;
 }
 
 
@@ -37,11 +92,7 @@ a{
   text-decoration: none;
 }
 
-nav ul{
-  text-decoration: none;
-  list-style: none;
-  height:100%;
-}
+
 a img{
   height:5em;;
 }
@@ -50,8 +101,12 @@ a img{
 }
 .message_holder {
   margin: 0 auto;
-  background-color: lightblue;
+  background-color: #1abc9c;
   width: 90%;
   height: 10em;;
   overflow: auto;
+  border-radius: 2em;
+}
+#logo{
+  color:#1abc9c;
 }

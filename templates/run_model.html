@@ -9,8 +9,9 @@
     {% block content %}
     <h1> Upload file and run model </h1>
       <form method=post enctype=multipart/form-data>
-        <input type=file name=file>
-        <input type=submit value=Upload>
+        <label for="file-upload" class="custom-file-upload">Upload File</label>
+        <input id = "file-upload" type=file name=file>
+        <input type=submit value="Predict">
       </form>
 
     {% if dataframe is not none and predictions is not none %}
@@ -22,6 +23,9 @@
             </figure>
           </a>
 
+    {% endif %}
+    {% if error is not none%}
+    <p class = "error">{{error}}</p>
     {% endif %}
 
     {% endblock %}

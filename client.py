@@ -11,7 +11,7 @@ def my_response(args):
     print("myresponse:",args)
 
 def page_joined(args):
-    filepath = 'uploads/input.csv'
+    filepath = 'uploads/Participant2f.csv'
     with open(filepath) as fp:
        line = fp.readline()
        cnt = 1
@@ -22,7 +22,7 @@ def page_joined(args):
                break
            socketIO.emit('my event',{'room': args,'message' : line})
            cnt += 1
-           time.sleep(.5)
+
     socketIO.emit('end transfer')
     time.sleep(2)
     socketIO.disconnect()
